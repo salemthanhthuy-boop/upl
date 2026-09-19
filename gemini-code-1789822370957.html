@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduManage Pro v2 - Quản Lý Lớp Học & Chấm Bài</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-light">
+
+  <!-- Header / Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#"><i class="bi bi-mortarboard-fill me-2"></i>EduManage Pro v2</a>
+      <span class="badge bg-light text-primary fs-6">Hệ thống Giảng viên</span>
+    </div>
+  </nav>
+
+  <div class="container my-4">
+    <!-- Tabs Navigation -->
+    <ul class="nav nav-pills mb-4 id="edumanageTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="assignments-tab" data-bs-toggle="pill" data-bs-target="#assignments-pane" type="button"><i class="bi bi-journal-text me-1"></i> Quản Lý Bài Tập</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="grading-tab" data-bs-toggle="pill" data-bs-target="#grading-pane" type="button"><i class="bi bi-check2-square me-1"></i> Xem Bài Nộp & Chấm Điểm</button>
+      </li>
+    </ul>
+
+    <div class="tab-content" id="edumanageTabContent">
+      
+      <!-- TAB 1: QUẢN LÝ BÀI TẬP -->
+      <div class="tab-pane fade show active" id="assignments-pane" role="tabpanel">
+        <div class="card shadow-sm mb-4">
+          <div class="card-header bg-white">
+            <h5 class="mb-0 text-primary"><i class="bi bi-plus-circle me-1"></i> Tạo Bài Tập Mới</h5>
+          </div>
+          <div class="card-body">
+            <form id="createAssignmentForm">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label font-weight-bold">Tên bài tập</label>
+                  <input type="text" id="assignTitle" class="form-control" placeholder="Ví dụ: Bài tập cá nhân tuần 2" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Hạn nộp</label>
+                  <input type="datetime-local" id="assignDeadline" class="form-control" required>
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Yêu cầu / Hướng dẫn</label>
+                  <textarea id="assignDesc" class="form-control" rows="3" placeholder="Chi tiết yêu cầu bài tập..."></textarea>
+                </div>
+                <div class="col-12 text-end">
+                  <button type="submit" class="btn btn-primary"><i class="bi bi-send me-1"></i> Đăng Bài Tập</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="card shadow-sm">
+          <div class="card-header bg-white">
+            <h5 class="mb-0"><i class="bi bi-list-task me-1"></i> Danh Sách Bài Tập Đã Giao</h5>
+          </div>
+          <div class="card-body">
+            <div id="assignmentList" class="list-group">
+              <!-- Render tự động -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: XEM BÀI NỘP VÀ CHẤM ĐIỂM -->
+      <div class="tab-pane fade" id="grading-pane" role="tabpanel">
+        <div class="card shadow-sm">
+          <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 text-success"><i class="bi bi-person-check me-1"></i> Quản Lý Bài Nộp Sinh Viên</h5>
+            <button class="btn btn-outline-success btn-sm" onclick="exportGradingCSV()"><i class="bi bi-file-earmark-spreadsheet me-1"></i> Xuất Bảng Điểm (CSV)</button>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>Mã SV</th>
+                    <th>Họ và Tên</th>
+                    <th>Nội Dung / File Bài Nộp</th>
+                    <th>Thời Gian Nộp</th>
+                    <th style="width: 140px;">Điểm Số</th>
+                    <th class="text-center">Thao Tác</th>
+                  </tr>
+                </thead>
+                <tbody id="submissionList">
+                  <!-- Render danh sách sinh viên nộp bài -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal Xem Chi Tiết & Preview Bài Nộp -->
+  <div class="modal fade" id="viewSubmissionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="modalStudentName">Chi Tiết Bài Làm Sinh Viên</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="modalSubmissionContent">
+          <!-- Chi tiết bài làm render tại đây -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
